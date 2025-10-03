@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRIS → GoQR → Base64</title>
+  <title>Rocket Flash QRIS Generator</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 24px; max-width: 900px; margin: auto; }
     textarea { width: 100%; height: 140px; font-family: monospace; font-size: 13px; padding: 8px; }
@@ -16,10 +16,15 @@
 </head>
 <body>
   <h1>Generate QR (GoQR) → Base64</h1>
-  <p>Tempel string QRIS di bawah lalu tekan <b>Generate</b>. Contoh string sudah terisi.</p>
+  <p>Masukkan nominal 5 digit (10000 - 99999), lalu generate QRIS.</p>
 
-  <label for="qrString">QR string (QRIS):</label>
-  <textarea id="qrString">00020101021226680016ID.CO.BATPAY.WWW011893600841000000001102150000000000000110303UMI51370014ID.CO.QRIS.WWW0215ID10243568644385204539953033605405230005502015802ID5912Rocket Flash6005BOGOR61051615362510703A01502520250930175922841105083530811Makan Siang63040207</textarea>
+  <div class="row">
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" min="10000" max="99999" maxlength="5" required placeholder="contoh: 23000"/>
+  </div>
+
+  <label for="qrString">QR string (template, gunakan <code>${amount}</code>):</label>
+  <textarea id="qrString">00020101021226680016ID.CO.BATPAY.WWW011893600841000000001102150000000000000110303UMI51370014ID.CO.QRIS.WWW0215ID10243568644385204539953033605405${amount}5502015802ID5912Rocket Flash6005BOGOR61051615362510703A01502520250930175922841105083530811Makan Siang63040207</textarea>
 
   <div class="row">
     <label for="size">Size:</label>
@@ -67,9 +72,16 @@
     const downloadBtn = document.getElementById('downloadBtn');
     const copyBtn = document.getElementById('copyBtn');
     const openNewTabBtn = document.getElementById('openNewTabBtn');
+    const amountEl = document.getElementById('amount');
+
+    // Batasi input supaya hanya 5 digit
+    amountEl.addEventListener('input', () => {
+      let v = amountEl.value.replace(/\D/g, ''); // hanya angka
+      if (v.length > 5) v = v.slice(0, 5);
+      amountEl.value = v;
+    });
 
     function arrayBufferToBase64(buffer) {
-      // convert ArrayBuffer to base64 string
       let binary = '';
       const bytes = new Uint8Array(buffer);
       const chunkSize = 0x8000;
@@ -81,64 +93,58 @@
     }
 
     generateBtn.addEventListener('click', async () => {
-      const data = qrStringEl.value.trim();
-      if (!data) return alert('Masukkan QR string terlebih dahulu.');
+      const amount = amountEl.value.trim();
+
+      // Validasi amount wajib 5 digit dan antara 10000-99999
+      if (!/^\d{5}$/.test(amount) || +amount < 10000 || +amount > 99999) {
+        return alert('Amount harus 5 digit (10000 - 99999).');
+      }
+
+      // replace ${amount} dalam template
+      const template = qrStringEl.value.trim();
+      const data = template.replace('${amount}', amount);
+
       const size = sizeEl.value;
       const fmt = formatEl.value || 'png';
-
-      // GoQR / api.qrserver endpoint
       const endpoint = `https://api.qrserver.com/v1/create-qr-code/?size=${encodeURIComponent(size)}&data=${encodeURIComponent(data)}&format=${encodeURIComponent(fmt)}`;
 
       try {
-        // For PNG we fetch binary; for SVG we can fetch text and directly use SVG data URL
         if (fmt === 'svg') {
           const resp = await fetch(endpoint);
-          if (!resp.ok) throw new Error('Gagal generate SVG: ' + resp.status);
           const svgText = await resp.text();
           const dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgText);
           qrImg.src = dataUrl;
           base64Box.textContent = dataUrl;
-          resultWrap.style.display = 'block';
         } else {
           const resp = await fetch(endpoint);
-          if (!resp.ok) throw new Error('Gagal generate image: ' + resp.status);
           const buffer = await resp.arrayBuffer();
           const b64 = arrayBufferToBase64(buffer);
           const dataUrl = 'data:image/png;base64,' + b64;
           qrImg.src = dataUrl;
           base64Box.textContent = dataUrl;
-          resultWrap.style.display = 'block';
 
-          // download button prepare
           downloadBtn.onclick = () => {
             const a = document.createElement('a');
             a.href = dataUrl;
             a.download = 'qris.png';
-            document.body.appendChild(a);
             a.click();
-            a.remove();
           };
 
           copyBtn.onclick = async () => {
-            try {
-              await navigator.clipboard.writeText(dataUrl);
-              copyBtn.textContent = 'Copied!';
-              setTimeout(()=> copyBtn.textContent = 'Copy data:image/png;base64', 1500);
-            } catch(e) {
-              alert('Gagal copy. Browser mungkin tidak izinkan clipboard API.');
-            }
+            await navigator.clipboard.writeText(dataUrl);
+            copyBtn.textContent = 'Copied!';
+            setTimeout(()=> copyBtn.textContent = 'Copy data:image/png;base64', 1500);
           };
 
           openNewTabBtn.onclick = () => {
             const w = window.open();
-            if (!w) return alert('Pop-up blocked. Izinkan pop-up untuk membuka tab baru.');
             w.document.write('<img src="' + dataUrl + '" alt="QR"/>');
           };
         }
 
+        resultWrap.style.display = 'block';
       } catch (err) {
         alert('Error: ' + err.message);
-        console.error(err);
       }
     });
 
