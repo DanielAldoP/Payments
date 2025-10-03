@@ -6,7 +6,6 @@
   <title>Rocket Flash QRIS Generator</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 24px; max-width: 900px; margin: auto; }
-    textarea { width: 100%; height: 140px; font-family: monospace; font-size: 13px; padding: 8px; }
     input, button, select { font-size: 14px; padding: 8px; }
     .row { display:flex; gap:8px; align-items:center; margin-top:12px; }
     .result { margin-top:18px; background:#f7f7f7; padding:12px; border-radius:6px; }
@@ -15,16 +14,13 @@
   </style>
 </head>
 <body>
-  <h1>Generate QR (GoQR) → Base64</h1>
-  <p>Masukkan nominal 5 digit (10000 - 99999), lalu generate QRIS.</p>
+  <h1>Generate QRIS</h1>
+  <p>Masukkan nominal 5 digit (10000 - 99999), lalu generate QRIS valid dengan CRC otomatis.</p>
 
   <div class="row">
     <label for="amount">Amount:</label>
     <input type="number" id="amount" min="10000" max="99999" maxlength="5" required placeholder="contoh: 23000"/>
   </div>
-
-  <label for="qrString">QR string (template, gunakan <code>${amount}</code>):</label>
-  <textarea id="qrString">00020101021226680016ID.CO.BATPAY.WWW011893600841000000001102150000000000000110303UMI51370014ID.CO.QRIS.WWW0215ID10243568644385204539953033605405${amount}5502015802ID5912Rocket Flash6005BOGOR61051615362070703A016304C7CA</textarea>
 
   <div class="row">
     <label for="size">Size:</label>
@@ -32,17 +28,9 @@
       <option value="200x200">200x200</option>
       <option value="300x300" selected>300x300</option>
       <option value="400x400">400x400</option>
-      <option value="600x600">600x600</option>
     </select>
-
-    <label for="format">Format:</label>
-    <select id="format">
-      <option value="png" selected>png</option>
-      <option value="svg">svg</option>
-    </select>
-
     <button id="generateBtn">Generate</button>
-    <button id="clearBtn" title="Clear result">Clear</button>
+    <button id="clearBtn">Clear</button>
   </div>
 
   <div class="result" id="result" style="display:none;">
@@ -50,108 +38,63 @@
       <img id="qrImg" class="qr" alt="QR image" />
     </div>
 
-    <div class="row">
-      <button id="downloadBtn">Download PNG</button>
-      <button id="copyBtn">Copy data:image/png;base64</button>
-      <button id="openNewTabBtn">Open in new tab</button>
-    </div>
-
-    <h4>Base64 (data URL)</h4>
-    <pre id="base64Box"></pre>
+    <h4>QRIS Payload</h4>
+    <pre id="payloadBox"></pre>
   </div>
 
   <script>
     const generateBtn = document.getElementById('generateBtn');
     const clearBtn = document.getElementById('clearBtn');
-    const qrStringEl = document.getElementById('qrString');
-    const sizeEl = document.getElementById('size');
-    const formatEl = document.getElementById('format');
     const resultWrap = document.getElementById('result');
     const qrImg = document.getElementById('qrImg');
-    const base64Box = document.getElementById('base64Box');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const openNewTabBtn = document.getElementById('openNewTabBtn');
+    const payloadBox = document.getElementById('payloadBox');
     const amountEl = document.getElementById('amount');
+    const sizeEl = document.getElementById('size');
 
-    // Batasi input supaya hanya 5 digit
-    amountEl.addEventListener('input', () => {
-      let v = amountEl.value.replace(/\D/g, ''); // hanya angka
-      if (v.length > 5) v = v.slice(0, 5);
-      amountEl.value = v;
-    });
+    // Template dasar (tanpa CRC & amount)
+    const baseTemplate = "00020101021226680016ID.CO.BATPAY.WWW011893600841000000001102150000000000000110303UMI51370014ID.CO.QRIS.WWW0215ID10243568644385204539953033605405{amount}5502015802ID5912Rocket Flash6005BOGOR61051615362070703A01";
 
-    function arrayBufferToBase64(buffer) {
-      let binary = '';
-      const bytes = new Uint8Array(buffer);
-      const chunkSize = 0x8000;
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        const chunk = bytes.subarray(i, i + chunkSize);
-        binary += String.fromCharCode.apply(null, chunk);
+    // Hitung CRC16
+    function crc16(payload) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < payload.length; i++) {
+        crc ^= payload.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          if ((crc & 0x8000) !== 0) {
+            crc = (crc << 1) ^ 0x1021;
+          } else {
+            crc <<= 1;
+          }
+          crc &= 0xFFFF;
+        }
       }
-      return btoa(binary);
+      return crc.toString(16).toUpperCase().padStart(4, '0');
     }
 
     generateBtn.addEventListener('click', async () => {
       const amount = amountEl.value.trim();
-
-      // Validasi amount wajib 5 digit dan antara 10000-99999
       if (!/^\d{5}$/.test(amount) || +amount < 10000 || +amount > 99999) {
         return alert('Amount harus 5 digit (10000 - 99999).');
       }
 
-      // replace ${amount} dalam template
-      const template = qrStringEl.value.trim();
-      const data = template.replace('${amount}', amount);
+      // Susun QRIS
+      let payload = baseTemplate.replace("{amount}", amount);
+      payload += "6304"; // CRC tag
+      const crc = crc16(payload);
+      payload += crc;
 
+      // Tampilkan payload & QR
+      payloadBox.textContent = payload;
       const size = sizeEl.value;
-      const fmt = formatEl.value || 'png';
-      const endpoint = `https://api.qrserver.com/v1/create-qr-code/?size=${encodeURIComponent(size)}&data=${encodeURIComponent(data)}&format=${encodeURIComponent(fmt)}`;
-
-      try {
-        if (fmt === 'svg') {
-          const resp = await fetch(endpoint);
-          const svgText = await resp.text();
-          const dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgText);
-          qrImg.src = dataUrl;
-          base64Box.textContent = dataUrl;
-        } else {
-          const resp = await fetch(endpoint);
-          const buffer = await resp.arrayBuffer();
-          const b64 = arrayBufferToBase64(buffer);
-          const dataUrl = 'data:image/png;base64,' + b64;
-          qrImg.src = dataUrl;
-          base64Box.textContent = dataUrl;
-
-          downloadBtn.onclick = () => {
-            const a = document.createElement('a');
-            a.href = dataUrl;
-            a.download = 'qris.png';
-            a.click();
-          };
-
-          copyBtn.onclick = async () => {
-            await navigator.clipboard.writeText(dataUrl);
-            copyBtn.textContent = 'Copied!';
-            setTimeout(()=> copyBtn.textContent = 'Copy data:image/png;base64', 1500);
-          };
-
-          openNewTabBtn.onclick = () => {
-            const w = window.open();
-            w.document.write('<img src="' + dataUrl + '" alt="QR"/>');
-          };
-        }
-
-        resultWrap.style.display = 'block';
-      } catch (err) {
-        alert('Error: ' + err.message);
-      }
+      const endpoint = `https://api.qrserver.com/v1/create-qr-code/?size=${encodeURIComponent(size)}&data=${encodeURIComponent(payload)}&format=png`;
+      qrImg.src = endpoint;
+      resultWrap.style.display = 'block';
     });
 
     clearBtn.addEventListener('click', () => {
       resultWrap.style.display = 'none';
       qrImg.src = '';
-      base64Box.textContent = '';
+      payloadBox.textContent = '';
     });
   </script>
 </body>
