@@ -57,7 +57,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 100px;
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .pokemon-image img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .pokemon-image:hover img {
+            transform: scale(1.1);
         }
 
         .pokemon-name {
@@ -130,7 +143,9 @@
     <div class="pokemon-container">
         <!-- Pikachu -->
         <div class="pokemon-card">
-            <div class="pokemon-image">⚡</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu">
+        </div>
             <h1 class="pokemon-name">Pikachu</h1>
             <div>
                 <span class="pokemon-type type-electric">Electric</span>
@@ -169,7 +184,9 @@
 
         <!-- Eevee -->
         <div class="pokemon-card" style="background: linear-gradient(135deg, #845ec2 0%, #c77dff 100%);">
-            <div class="pokemon-image">🦊</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png" alt="Eevee">
+        </div>
             <h1 class="pokemon-name">Eevee</h1>
             <div>
                 <span class="pokemon-type type-normal">Normal</span>
@@ -208,7 +225,9 @@
 
         <!-- Jigglypuff -->
         <div class="pokemon-card" style="background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);">
-            <div class="pokemon-image">🎵</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png" alt="Jigglypuff">
+        </div>
             <h1 class="pokemon-name">Jigglypuff</h1>
             <div>
                 <span class="pokemon-type type-fairy">Fairy</span>
@@ -248,7 +267,9 @@
 
         <!-- Bulbasaur -->
         <div class="pokemon-card" style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);">
-            <div class="pokemon-image">🌱</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="Bulbasaur">
+        </div>
             <h1 class="pokemon-name">Bulbasaur</h1>
             <div>
                 <span class="pokemon-type type-grass">Grass</span>
@@ -288,7 +309,9 @@
 
         <!-- Squirtle -->
         <div class="pokemon-card" style="background: linear-gradient(135deg, #4dabf7 0%, #1c7ed6 100%);">
-            <div class="pokemon-image">💧</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png" alt="Squirtle">
+        </div>
             <h1 class="pokemon-name">Squirtle</h1>
             <div>
                 <span class="pokemon-type type-water">Water</span>
@@ -327,7 +350,9 @@
 
         <!-- Psyduck -->
         <div class="pokemon-card" style="background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);">
-            <div class="pokemon-image">🦆</div>
+            <div class="pokemon-image">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png" alt="Psyduck">
+        </div>
             <h1 class="pokemon-name">Psyduck</h1>
             <div>
                 <span class="pokemon-type type-water">Water</span>
