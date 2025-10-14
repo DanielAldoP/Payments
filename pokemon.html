@@ -10,10 +10,15 @@
             padding: 20px;
             background-color: #f5f5f5;
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+        }
+
+        .pokemon-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .pokemon-card {
@@ -122,41 +127,240 @@
     </style>
 </head>
 <body>
-    <div class="pokemon-card">
-        <div class="pokemon-image">🔥</div>
-        <h1 class="pokemon-name">Charizard</h1>
-        <div>
-            <span class="pokemon-type type-fire">Fire</span>
-            <span class="pokemon-type type-flying">Flying</span>
+    <div class="pokemon-container">
+        <!-- Pikachu -->
+        <div class="pokemon-card">
+            <div class="pokemon-image">⚡</div>
+            <h1 class="pokemon-name">Pikachu</h1>
+            <div>
+                <span class="pokemon-type type-electric">Electric</span>
+            </div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 35%"></div>
+                    </div>
+                    <span>35</span>
+                </div>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 55%"></div>
+                    </div>
+                    <span>55</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 40%"></div>
+                    </div>
+                    <span>40</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 90%"></div>
+                    </div>
+                    <span>90</span>
+                </div>
+            </div>
         </div>
-        <div class="pokemon-stats">
-            <div class="stat-row">
-                <span>HP</span>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 84%"></div>
-                </div>
-                <span>84</span>
+
+        <!-- Eevee -->
+        <div class="pokemon-card" style="background: linear-gradient(135deg, #845ec2 0%, #c77dff 100%);">
+            <div class="pokemon-image">🦊</div>
+            <h1 class="pokemon-name">Eevee</h1>
+            <div>
+                <span class="pokemon-type type-normal">Normal</span>
             </div>
-            <div class="stat-row">
-                <span>Attack</span>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 78%"></div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 55%"></div>
+                    </div>
+                    <span>55</span>
                 </div>
-                <span>78</span>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 55%"></div>
+                    </div>
+                    <span>55</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 50%"></div>
+                    </div>
+                    <span>50</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 55%"></div>
+                    </div>
+                    <span>55</span>
+                </div>
             </div>
-            <div class="stat-row">
-                <span>Defense</span>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 78%"></div>
-                </div>
-                <span>78</span>
+        </div>
+
+        <!-- Jigglypuff -->
+        <div class="pokemon-card" style="background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);">
+            <div class="pokemon-image">🎵</div>
+            <h1 class="pokemon-name">Jigglypuff</h1>
+            <div>
+                <span class="pokemon-type type-fairy">Fairy</span>
+                <span class="pokemon-type type-normal">Normal</span>
             </div>
-            <div class="stat-row">
-                <span>Speed</span>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 100%"></div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 115%"></div>
+                    </div>
+                    <span>115</span>
                 </div>
-                <span>100</span>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 45%"></div>
+                    </div>
+                    <span>45</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 20%"></div>
+                    </div>
+                    <span>20</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 20%"></div>
+                    </div>
+                    <span>20</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulbasaur -->
+        <div class="pokemon-card" style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);">
+            <div class="pokemon-image">🌱</div>
+            <h1 class="pokemon-name">Bulbasaur</h1>
+            <div>
+                <span class="pokemon-type type-grass">Grass</span>
+                <span class="pokemon-type type-poison">Poison</span>
+            </div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 45%"></div>
+                    </div>
+                    <span>45</span>
+                </div>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 49%"></div>
+                    </div>
+                    <span>49</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 49%"></div>
+                    </div>
+                    <span>49</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 45%"></div>
+                    </div>
+                    <span>45</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Squirtle -->
+        <div class="pokemon-card" style="background: linear-gradient(135deg, #4dabf7 0%, #1c7ed6 100%);">
+            <div class="pokemon-image">💧</div>
+            <h1 class="pokemon-name">Squirtle</h1>
+            <div>
+                <span class="pokemon-type type-water">Water</span>
+            </div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 44%"></div>
+                    </div>
+                    <span>44</span>
+                </div>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 48%"></div>
+                    </div>
+                    <span>48</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 65%"></div>
+                    </div>
+                    <span>65</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 43%"></div>
+                    </div>
+                    <span>43</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Psyduck -->
+        <div class="pokemon-card" style="background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);">
+            <div class="pokemon-image">🦆</div>
+            <h1 class="pokemon-name">Psyduck</h1>
+            <div>
+                <span class="pokemon-type type-water">Water</span>
+            </div>
+            <div class="pokemon-stats">
+                <div class="stat-row">
+                    <span>HP</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 50%"></div>
+                    </div>
+                    <span>50</span>
+                </div>
+                <div class="stat-row">
+                    <span>Attack</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 52%"></div>
+                    </div>
+                    <span>52</span>
+                </div>
+                <div class="stat-row">
+                    <span>Defense</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 48%"></div>
+                    </div>
+                    <span>48</span>
+                </div>
+                <div class="stat-row">
+                    <span>Speed</span>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 55%"></div>
+                    </div>
+                    <span>55</span>
+                </div>
             </div>
         </div>
     </div>
